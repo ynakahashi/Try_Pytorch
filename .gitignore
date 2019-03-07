@@ -1,3 +1,4 @@
 
 .ipynb_checkpoints/NN_with_Numpy-checkpoint.ipynb
 .ipynb_checkpoints/NN_with_Pytorch-checkpoint.ipynb
+*.ipynb
