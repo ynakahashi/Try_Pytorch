@@ -6,7 +6,11 @@ Created on Thu Mar  7 16:56:26 2019
 @author: yn250006
 """
 
-## Load libraries
+""" Set current directory """
+cd /Users/yn250006/Documents/GitHub/Try_Pytorch/
+
+
+""" Load libraries """
 import janome
 from janome.tokenizer import Tokenizer
 
@@ -24,7 +28,7 @@ from torch.autograd import Variable
 torch.manual_seed(0)
 torch.cuda.manual_seed(0)
 
-## 
+""" Define Tokenizer """
 j_t = Tokenizer()
 def tokenizer(text): 
     return [tok for tok in j_t.tokenize(text, wakati=True)]
@@ -32,6 +36,7 @@ def tokenizer(text):
 TEXT = data.Field(sequential=True, tokenize=tokenizer, lower=True, include_lengths=True, batch_first=True)
 LABEL = data.Field(sequential=False, use_vocab=False)
 
+""" Read data under the above definition """
 # train, val, test = data.TabularDataset.splits(
 #         path='./Data/', train='train.tsv',
 #         validation='valid.tsv', test='test.tsv', format='tsv',
@@ -41,6 +46,7 @@ train, val, test = data.TabularDataset.splits(
         validation='valid_small.tsv', test='test_small.tsv', format='tsv',
         fields = [('Text', TEXT), ('Label', LABEL)])
 
+""" Check """"
 print('len(train)', len(train))
 print('vars(train[0])', vars(train[0]))
 
@@ -50,19 +56,46 @@ print('vars(val[0])', vars(val[0]))
 print('len(test)', len(test))
 print('vars(test[0])', vars(test[0]))
 
+
+""" 読み込んだデータに出現した単語のリストを作成し、単語に番号を振る """
 TEXT.build_vocab(train, min_freq=10)
+""" FastTextの学習済みベクトルを使うならこちら """
+# TEXT.build_vocab(train, vectors = FastText(language="ja"), min_freq = 10)
 
-TEXT.vocab.freqs
-TEXT.vocab.stoi
-TEXT.vocab.itos
 
+""" Check """
+""" dictionaryはsliceできないけど、一度listに変換すればsliceできる """
+# TEXT.vocab.freqs
+dict(list(TEXT.vocab.freqs.items())[0:10])
+# TEXT.vocab.stoi
+dict(list(TEXT.vocab.stoi.items())[0:10])
+# TEXT.vocab.itos
+dict(list(TEXT.vocab.stoi.items())[0:10])
+
+
+"""
+data.Iterator.splits は dataset オブジェクトから、各単語を番号に変換して
+ミニバッチごとにまとめた行列を返すイテレータを作成できます。
+"""
 
 train_iter, val_iter, test_iter = data.Iterator.splits(
         (train, val, test), batch_sizes=(32, 256, 256), device=-1, repeat=False,sort=False)
 
+
+train_iter, val_iter, test_iter = data.Iterator.splits(
+        (train, val, test), batch_sizes=(32, 2, 1), device=-1, repeat=False,sort=False)
+
+
+"""
+イテレータの返す結果
+batch.Textは[32, 1475]の二次元配列と[32]の一次元配列を含むtuple、
+batch.Labelは[32]の一次元配列
+"""
 batch = next(iter(train_iter))
 print(batch.Text)
 print(batch.Label)
+batch.Text[0].size()
+batch.Text[1].size()
 
 # class EncoderRNN(nn.Module):
 #     def __init__(self, emb_dim, h_dim, v_size, gpu=True, batch_first=True):
@@ -174,9 +207,10 @@ def test_model(epoch, test_iter):
     print('test epoch:{}, acc:{}'.format(epoch, correct/float(len(test))))
 
 
+
 emb_dim = 300 #単語埋め込み次元
 h_dim = 3 #lstmの隠れ層の次元
-class_num = 2 #予測クラウ数
+class_num = 2 #予測クラス数
 lr = 0.001 #学習係数
 epochs = 50 #エポック数
 
