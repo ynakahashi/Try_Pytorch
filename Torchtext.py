@@ -163,7 +163,7 @@ class Attn(nn.Module):
 class AttnClassifier(nn.Module):
     def __init__(self, h_dim, c_num):
         super(AttnClassifier, self).__init__()
-        self.attn = Attn(h_dim)
+        self.attn = f
         self.main = nn.Linear(h_dim, c_num)
 
 
