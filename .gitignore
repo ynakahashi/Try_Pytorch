@@ -8,3 +8,5 @@ Data/.ipynb_checkpoints/Get_Livedoor_Corpus-checkpoint.ipynb
 Data/.ipynb_checkpoints/Arrange_Data_for_Torchtext-checkpoint.ipynb
 .vector_cache/wiki.ja.vec
 .vector_cache/wiki.ja.vec.pt
+.ipynb_checkpoints/Try_Pyro-checkpoint.ipynb
+.ipynb_checkpoints/Pyro_Linear_Regression-checkpoint.ipynb
